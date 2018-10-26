@@ -85,7 +85,7 @@ public class Proxy {
                                         String targetName = KeyEnum.TARGET.getName() + "_" + count;
                                         keyMap.put(targetName, targetChannel.register(selectors, SelectionKey.OP_READ, targetName));
                                         Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
-                                    }catch (IOException e) {
+                                    } catch (IOException e) {
                                         e.printStackTrace();
                                     }
 
@@ -202,46 +202,45 @@ public class Proxy {
     private void handleError(Exception... e) {
         if (e.length > 0) {
             Utils.print("error type：", e[0].getMessage());
+            e[0].printStackTrace();
         }
-        synchronized (buffer) {
-            List<String> list = new ArrayList<>();
-            keyMap.forEach((key, value) -> {
-                if (key != null && (key.startsWith("client") || key.startsWith("target"))) {
-                    String[] temp = key.split("_");
-                    if (list.contains(temp[1])) {
-                        list.remove(temp[1]);
-                    } else {
-                        list.add(temp[1]);
-                    }
+        List<String> list = new ArrayList<>();
+        keyMap.forEach((key, value) -> {
+            if (key != null && (key.startsWith("client") || key.startsWith("target"))) {
+                String[] temp = key.split("_");
+                if (list.contains(temp[1])) {
+                    list.remove(temp[1]);
+                } else {
+                    list.add(temp[1]);
                 }
-            });
+            }
+        });
 
-            list.forEach(item -> {
-                SelectionKey key = keyMap.get("client_" + item);
-                SelectionKey target = keyMap.get("target_" + item);
-                if (key != null) {
-                    SocketChannel channel = (SocketChannel) key.channel();
-                    try {
-                        channel.close();
-                        keyMap.remove("client_" + item);
-                        System.out.println("close " + key.attachment() + " connection");
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+        list.forEach(item -> {
+            SelectionKey key = keyMap.get("client_" + item);
+            SelectionKey target = keyMap.get("target_" + item);
+            if (key != null) {
+                SocketChannel channel = (SocketChannel) key.channel();
+                try {
+                    channel.close();
+                    keyMap.remove("client_" + item);
+                    System.out.println("close " + key.attachment() + " connection");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
+            }
 
-                if (target != null) {
-                    SocketChannel channel = (SocketChannel) target.channel();
-                    try {
-                        channel.close();
-                        keyMap.remove("target_" + item);
-                        System.out.println("close " + target.attachment() + " connection");
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+            if (target != null) {
+                SocketChannel channel = (SocketChannel) target.channel();
+                try {
+                    channel.close();
+                    keyMap.remove("target_" + item);
+                    System.out.println("close " + target.attachment() + " connection");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-            });
-        }
+            }
+        });
     }
 
 }

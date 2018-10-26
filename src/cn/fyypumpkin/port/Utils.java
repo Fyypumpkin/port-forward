@@ -7,7 +7,7 @@ import java.nio.channels.SocketChannel;
  */
 public class Utils {
     public static void print(Object left, Object right) {
-        String format = "%-" + (20 - left.toString().length()) + "s";
+        String format = "%-20s";
         System.out.printf(format, left);
         System.out.println(right);
     }

@@ -21,8 +21,10 @@ public class ProxyWrite {
         key.interestOps(SelectionKey.OP_WRITE);
         buffer.flip();
         SocketChannel channel = (SocketChannel) key.channel();
-        channel.write(buffer);
-        Utils.print("message send to：", channel.getRemoteAddress() + " " + key.attachment() + " " + count + " bytes");
+        while (buffer.hasRemaining()) {
+            channel.write(buffer);
+            Utils.print("message send to：", channel.getRemoteAddress() + " " + key.attachment() + " " + count + " bytes");
+        }
         buffer.clear();
         key.interestOps(SelectionKey.OP_READ);
     }
