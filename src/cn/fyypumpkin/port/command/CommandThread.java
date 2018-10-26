@@ -11,11 +11,11 @@ public class CommandThread implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("输入目标代理ip：");
+        System.out.println("input remote ip：");
         String targetIp = scanner.next();
-        System.out.println("输入目标代理port：");
+        System.out.println("input remote port：");
         Integer targetPort = scanner.nextInt();
-        System.out.println("输入本地监听port：");
+        System.out.println("input local listen port：");
         Integer listenPort = scanner.nextInt();
 
         new Proxy.Builder().setTargetIp(targetIp).setTargetPort(targetPort).setListenPort(listenPort).build().run();

@@ -23,7 +23,7 @@ public class ProxyWrite {
         while (buffer.remaining() > 0) {
             SocketChannel channel = (SocketChannel) key.channel();
             channel.write(buffer);
-            Utils.print("消息送往：",channel.getRemoteAddress() +  " "  + key.attachment() + " " + count + "字节");
+            Utils.print("message send to：",channel.getRemoteAddress() +  " "  + key.attachment() + " " + count + " bytes");
         }
         buffer.clear();
         key.interestOps(SelectionKey.OP_READ);

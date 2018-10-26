@@ -57,7 +57,7 @@ public class Proxy {
         ExecutorService service = Executors.newFixedThreadPool(2);
         service.execute(new ProxyServer());
         service.execute(new ExchangeService());
-        System.out.println("启动成功...");
+        System.out.println("start success...");
     }
 
     class ProxyServer implements Runnable {
@@ -83,14 +83,14 @@ public class Proxy {
                                     client.configureBlocking(false);
                                     String userName = KeyEnum.CLIENT.getName() + "_" + count;
                                     keyMap.put(userName, client.register(selectors, SelectionKey.OP_READ, userName));
-                                    Utils.print("新用户链接：", client.getRemoteAddress() + " " + userName);
+                                    Utils.print("new user connect：", client.getRemoteAddress() + " " + userName);
 
                                     SocketChannel targetChannel = SocketChannel.open();
                                     targetChannel.connect(new InetSocketAddress(targetIp, targetPort));
                                     targetChannel.configureBlocking(false);
                                     String targetName = KeyEnum.TARGET.getName() + "_" + count;
                                     keyMap.put(targetName, targetChannel.register(selectors, SelectionKey.OP_READ, targetName));
-                                    Utils.print("新端机器链接：", targetChannel.getRemoteAddress() + " " + targetName);
+                                    Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
 
                                     count.incrementAndGet();
                                 }
@@ -123,7 +123,7 @@ public class Proxy {
 
                                 if (key.isReadable()) {
                                     try {
-                                        Utils.print("消息来自：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
+                                        Utils.print("message from：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
                                         assert type != null;
                                         if ("target".equals(type.getName())) {
                                             synchronized (LOCK) {
@@ -135,7 +135,7 @@ public class Proxy {
                                                 } else {
                                                     String targetName = (String) key.attachment();
                                                     keyMap.remove(targetName);
-                                                    Utils.print("远程断开链接：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
+                                                    Utils.print("remote close connection：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
                                                     key.channel().close();
                                                     handleError();
                                                 }
@@ -149,7 +149,7 @@ public class Proxy {
                                                 } else {
                                                     String clientName = (String) key.attachment();
                                                     keyMap.remove(clientName);
-                                                    Utils.print("用户断开链接：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
+                                                    Utils.print("user close connection：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
 
                                                     key.channel().close();
                                                     handleError();
@@ -199,7 +199,7 @@ public class Proxy {
 
     private void handleError(Exception... e) {
         if (e.length > 0) {
-            Utils.print("错误类型：", e[0].getMessage());
+            Utils.print("error type：", e[0].getMessage());
         }
         synchronized (LOCK) {
             List<String> list = new ArrayList<>();
@@ -222,7 +222,7 @@ public class Proxy {
                     try {
                         channel.close();
                         keyMap.remove("client_" + item);
-                        System.out.println("关闭 " + key.attachment() + " 链接");
+                        System.out.println("close " + key.attachment() + " connection");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -233,7 +233,7 @@ public class Proxy {
                     try {
                         channel.close();
                         keyMap.remove("target_" + item);
-                        System.out.println("关闭 " + target.attachment() + " 链接");
+                        System.out.println("close " + target.attachment() + " connection");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
