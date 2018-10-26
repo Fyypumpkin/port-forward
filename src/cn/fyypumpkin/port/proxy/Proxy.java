@@ -2,6 +2,7 @@ package cn.fyypumpkin.port.proxy;
 
 import cn.fyypumpkin.port.Utils;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -46,7 +47,7 @@ public class Proxy {
                 if (selectors == null) {
                     selectors = Selector.open();
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -93,17 +94,17 @@ public class Proxy {
                                         Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
 
                                         count.incrementAndGet();
-                                    }catch (Exception e) {
-                                        handleError(e);
+                                    }catch (IOException e) {
+
                                     }
                                 }
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         handleError(e);
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -167,7 +168,7 @@ public class Proxy {
 
                         }
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -226,7 +227,7 @@ public class Proxy {
                         channel.close();
                         keyMap.remove("client_" + item);
                         System.out.println("close " + key.attachment() + " connection");
-                    } catch (Exception e1) {
+                    } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
@@ -237,7 +238,7 @@ public class Proxy {
                         channel.close();
                         keyMap.remove("target_" + item);
                         System.out.println("close " + target.attachment() + " connection");
-                    } catch (Exception e1) {
+                    } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
