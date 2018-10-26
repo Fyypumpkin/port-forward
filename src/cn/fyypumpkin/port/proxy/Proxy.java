@@ -132,9 +132,8 @@ public class Proxy {
                                             synchronized (buffer) {
                                                 SelectionKey clientKey = keyMap.get(type.getTo() + serviceCount);
                                                 int count = ((SocketChannel) key.channel()).read(buffer);
-                                                if (count >= 0) {
+                                                if (count > 0) {
                                                     proxyWrite.handleWrite(clientKey, count);
-                                                    clientKey.interestOps(SelectionKey.OP_READ);
                                                 } else {
                                                     String targetName = (String) key.attachment();
                                                     keyMap.remove(targetName);
