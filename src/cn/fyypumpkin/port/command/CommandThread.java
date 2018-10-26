@@ -18,7 +18,7 @@ public class CommandThread implements Runnable {
         System.out.println("input local listen port：");
         Integer listenPort = scanner.nextInt();
 
-        new Proxy.Builder().setTargetIp(targetIp).setTargetPort(targetPort).setListenPort(listenPort).build().run();
+        new Proxy.Builder().setTargetIp(targetIp).setTargetPort(targetPort).setListenPort(listenPort).setByteBufferAllocate(1024).build().run();
 
     }
 }
