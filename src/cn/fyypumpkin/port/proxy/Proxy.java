@@ -79,12 +79,6 @@ public class Proxy {
                                 iterator.remove();
 
                                 if (key.isAcceptable()) {
-                                    SocketChannel client = ((ServerSocketChannel) key.channel()).accept();
-                                    client.configureBlocking(false);
-                                    String userName = KeyEnum.CLIENT.getName() + "_" + count;
-                                    keyMap.put(userName, client.register(selectors, SelectionKey.OP_READ, userName));
-                                    Utils.print("new user connect：", client.getRemoteAddress() + " " + userName);
-
                                     try {
                                         SocketChannel targetChannel = SocketChannel.open();
                                         targetChannel.connect(new InetSocketAddress(targetIp, targetPort));
@@ -92,11 +86,17 @@ public class Proxy {
                                         String targetName = KeyEnum.TARGET.getName() + "_" + count;
                                         keyMap.put(targetName, targetChannel.register(selectors, SelectionKey.OP_READ, targetName));
                                         Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
-
-                                        count.incrementAndGet();
                                     }catch (IOException e) {
-
+                                        e.printStackTrace();
                                     }
+
+                                    SocketChannel client = ((ServerSocketChannel) key.channel()).accept();
+                                    client.configureBlocking(false);
+                                    String userName = KeyEnum.CLIENT.getName() + "_" + count;
+                                    keyMap.put(userName, client.register(selectors, SelectionKey.OP_READ, userName));
+                                    Utils.print("new user connect：", client.getRemoteAddress() + " " + userName);
+
+                                    count.incrementAndGet();
                                 }
                             }
                         }
