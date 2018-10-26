@@ -2,7 +2,6 @@ package cn.fyypumpkin.port.proxy;
 
 import cn.fyypumpkin.port.Utils;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -47,7 +46,7 @@ public class Proxy {
                 if (selectors == null) {
                     selectors = Selector.open();
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -85,22 +84,26 @@ public class Proxy {
                                     keyMap.put(userName, client.register(selectors, SelectionKey.OP_READ, userName));
                                     Utils.print("new user connect：", client.getRemoteAddress() + " " + userName);
 
-                                    SocketChannel targetChannel = SocketChannel.open();
-                                    targetChannel.connect(new InetSocketAddress(targetIp, targetPort));
-                                    targetChannel.configureBlocking(false);
-                                    String targetName = KeyEnum.TARGET.getName() + "_" + count;
-                                    keyMap.put(targetName, targetChannel.register(selectors, SelectionKey.OP_READ, targetName));
-                                    Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
+                                    try {
+                                        SocketChannel targetChannel = SocketChannel.open();
+                                        targetChannel.connect(new InetSocketAddress(targetIp, targetPort));
+                                        targetChannel.configureBlocking(false);
+                                        String targetName = KeyEnum.TARGET.getName() + "_" + count;
+                                        keyMap.put(targetName, targetChannel.register(selectors, SelectionKey.OP_READ, targetName));
+                                        Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
 
-                                    count.incrementAndGet();
+                                        count.incrementAndGet();
+                                    }catch (Exception e) {
+                                        handleError(e);
+                                    }
                                 }
                             }
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         handleError(e);
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -164,7 +167,7 @@ public class Proxy {
 
                         }
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -223,7 +226,7 @@ public class Proxy {
                         channel.close();
                         keyMap.remove("client_" + item);
                         System.out.println("close " + key.attachment() + " connection");
-                    } catch (IOException e1) {
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                 }
@@ -234,7 +237,7 @@ public class Proxy {
                         channel.close();
                         keyMap.remove("target_" + item);
                         System.out.println("close " + target.attachment() + " connection");
-                    } catch (IOException e1) {
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                 }
