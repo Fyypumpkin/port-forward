@@ -27,9 +27,8 @@ public class Proxy {
     private static Integer listenPort;
     private static Selector serverSelector;
     private static Selector selectors;
-    private static ByteBuffer buffer = ByteBuffer.allocate(1024 * 10);
+    private static final ByteBuffer buffer = ByteBuffer.allocate(1024 * 10);
     private static ProxyWrite proxyWrite;
-    private static final Object LOCK = new Object();
     private static AtomicInteger count = new AtomicInteger(0);
     private static Map<String, SelectionKey> keyMap = new ConcurrentHashMap<>(8);
 
@@ -38,7 +37,7 @@ public class Proxy {
         targetPort = builder.targetPort;
         listenPort = builder.listenPort;
         proxyWrite = new ProxyWrite(buffer);
-        synchronized (LOCK) {
+        synchronized (buffer) {
             try {
                 if (serverSelector == null) {
                     serverSelector = Selector.open();
@@ -130,7 +129,7 @@ public class Proxy {
                                         Utils.print("message from：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
                                         assert type != null;
                                         if ("target".equals(type.getName())) {
-                                            synchronized (LOCK) {
+                                            synchronized (buffer) {
                                                 SelectionKey clientKey = keyMap.get(type.getTo() + serviceCount);
                                                 int count = ((SocketChannel) key.channel()).read(buffer);
                                                 if (count >= 0) {
@@ -145,7 +144,7 @@ public class Proxy {
                                                 }
                                             }
                                         } else if ("client".equals(type.getName())) {
-                                            synchronized (LOCK) {
+                                            synchronized (buffer) {
                                                 SelectionKey targetKey = keyMap.get(type.getTo() + serviceCount);
                                                 int count = ((SocketChannel) key.channel()).read(buffer);
                                                 if (count > 0) {
@@ -205,7 +204,7 @@ public class Proxy {
         if (e.length > 0) {
             Utils.print("error type：", e[0].getMessage());
         }
-        synchronized (LOCK) {
+        synchronized (buffer) {
             List<String> list = new ArrayList<>();
             keyMap.forEach((key, value) -> {
                 if (key != null && (key.startsWith("client") || key.startsWith("target"))) {

@@ -20,11 +20,9 @@ public class ProxyWrite {
     public void handleWrite(SelectionKey key, int count) throws IOException {
         key.interestOps(SelectionKey.OP_WRITE);
         buffer.flip();
-        while (buffer.remaining() > 0) {
-            SocketChannel channel = (SocketChannel) key.channel();
-            channel.write(buffer);
-            Utils.print("message send to：",channel.getRemoteAddress() +  " "  + key.attachment() + " " + count + " bytes");
-        }
+        SocketChannel channel = (SocketChannel) key.channel();
+        channel.write(buffer);
+        Utils.print("message send to：", channel.getRemoteAddress() + " " + key.attachment() + " " + count + " bytes");
         buffer.clear();
         key.interestOps(SelectionKey.OP_READ);
     }
