@@ -17,8 +17,10 @@ public class CommandThread implements Runnable {
         Integer targetPort = scanner.nextInt();
         System.out.println("input local listen port：");
         Integer listenPort = scanner.nextInt();
+        System.out.println("input max buffer bytes：");
+        Integer maxBuffer = scanner.nextInt();
 
-        new Proxy.Builder().setTargetIp(targetIp).setTargetPort(targetPort).setListenPort(listenPort).setByteBufferAllocate(1024).build().run();
+        new Proxy.Builder().setTargetIp(targetIp).setTargetPort(targetPort).setListenPort(listenPort).setByteBufferAllocate(maxBuffer).build().run();
 
     }
 }
