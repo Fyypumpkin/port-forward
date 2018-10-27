@@ -73,7 +73,7 @@ public class Proxy {
 
                 while (true) {
                     try {
-                        if (serverSelector.select() > 0) {
+                        if (serverSelector.select(1) > 0) {
                             Iterator<SelectionKey> iterator = serverSelector.selectedKeys().iterator();
                             while (iterator.hasNext()) {
                                 SelectionKey key = iterator.next();
@@ -116,7 +116,7 @@ public class Proxy {
         public void run() {
             while (true) {
                 try {
-                    if (selectors.select() > 0) {
+                    if (selectors.select(1) > 0) {
                         {
                             Iterator<SelectionKey> selectionKeys = selectors.selectedKeys().iterator();
                             while (selectionKeys.hasNext()) {
