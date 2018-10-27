@@ -1,5 +1,6 @@
 package cn.fyypumpkin.port.proxy;
 
+import cn.fyypumpkin.port.DisplayMsg;
 import cn.fyypumpkin.port.Utils;
 
 import java.io.IOException;
@@ -85,7 +86,7 @@ public class Proxy {
                                         targetChannel.configureBlocking(false);
                                         String targetName = KeyEnum.TARGET.getName() + "_" + count;
                                         keyMap.put(targetName, targetChannel.register(selectors, SelectionKey.OP_READ, targetName));
-                                        Utils.print("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName);
+                                        Utils.put(new DisplayMsg("new remote connect：", targetChannel.getRemoteAddress() + " " + targetName));
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -94,7 +95,7 @@ public class Proxy {
                                     client.configureBlocking(false);
                                     String userName = KeyEnum.CLIENT.getName() + "_" + count;
                                     keyMap.put(userName, client.register(selectors, SelectionKey.OP_READ, userName));
-                                    Utils.print("new user connect：", client.getRemoteAddress() + " " + userName);
+                                    Utils.put(new DisplayMsg("new user connect：", client.getRemoteAddress() + " " + userName));
 
                                     count.incrementAndGet();
                                 }
@@ -127,7 +128,7 @@ public class Proxy {
 
                                 if (key.isReadable()) {
                                     try {
-                                        Utils.print("message from：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
+                                        Utils.put(new DisplayMsg("message from：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment()));
                                         assert type != null;
                                         if ("target".equals(type.getName())) {
                                             synchronized (this) {
@@ -138,7 +139,7 @@ public class Proxy {
                                                 } else {
                                                     String targetName = (String) key.attachment();
                                                     keyMap.remove(targetName);
-                                                    Utils.print("remote close connection：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
+                                                    Utils.put(new DisplayMsg("remote close connection：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment()));
                                                     key.channel().close();
                                                     handleError();
                                                 }
@@ -152,7 +153,7 @@ public class Proxy {
                                                 } else {
                                                     String clientName = (String) key.attachment();
                                                     keyMap.remove(clientName);
-                                                    Utils.print("user close connection：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment());
+                                                    Utils.put(new DisplayMsg("user close connection：", ((SocketChannel) key.channel()).getRemoteAddress() + " " + key.attachment()));
 
                                                     key.channel().close();
                                                     handleError();
@@ -208,7 +209,7 @@ public class Proxy {
 
     private void handleError(Exception... e) {
         if (e.length > 0) {
-            Utils.print("error type：", e[0].getMessage());
+            Utils.put(new DisplayMsg("error type：", e[0].getMessage()));
             e[0].printStackTrace();
         }
         List<String> list = new ArrayList<>();

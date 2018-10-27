@@ -1,5 +1,6 @@
 package cn.fyypumpkin.port.proxy;
 
+import cn.fyypumpkin.port.DisplayMsg;
 import cn.fyypumpkin.port.Utils;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class ProxyWrite {
         SocketChannel channel = (SocketChannel) key.channel();
         while (buffer.hasRemaining()) {
             channel.write(buffer);
-            Utils.print("message send to：", channel.getRemoteAddress() + " " + key.attachment() + " " + count + " bytes");
+            Utils.put(new DisplayMsg("message send to：", channel.getRemoteAddress() + " " + key.attachment() + " " + count + " bytes"));
         }
         buffer.clear();
         key.interestOps(SelectionKey.OP_READ);
