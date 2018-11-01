@@ -73,7 +73,7 @@ public class Proxy {
 
                 while (true) {
                     try {
-                        if (serverSelector.select(1) > 0) {
+                        if (serverSelector.select() > 0) {
                             Iterator<SelectionKey> iterator = serverSelector.selectedKeys().iterator();
                             while (iterator.hasNext()) {
                                 SelectionKey key = iterator.next();
@@ -224,7 +224,7 @@ public class Proxy {
             }
         });
 
-        list.forEach(item -> {
+        list.stream().parallel().forEach(item -> {
             SelectionKey key = keyMap.get("client_" + item);
             SelectionKey target = keyMap.get("target_" + item);
             if (key != null) {
